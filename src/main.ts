@@ -1,10 +1,35 @@
+import { Logger, VersioningType } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
+import { envKeys } from './core/config/env-keys';
+
+import type { EnvConfig } from './core/config/env-keys';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.PORT ?? 3000);
+
+  const { protocol, host, port, basePath, version } = app
+    .get(ConfigService<EnvConfig>)
+    .getOrThrow(envKeys.app, { infer: true });
+
+  const baseUrl = `${protocol}://${port ? `${host}/${port}` : host}`;
+  const apiVersionPath = `${basePath}/v${version}`;
+
+  app
+    .enableVersioning({
+      type: VersioningType.URI,
+      defaultVersion: `${version}`,
+      prefix: 'v',
+    })
+    .setGlobalPrefix(basePath);
+
+  await app.listen(port);
+
+  Logger.log(`
+    - Server: ${baseUrl}/${apiVersionPath}
+    `);
 }
 
 void bootstrap();
