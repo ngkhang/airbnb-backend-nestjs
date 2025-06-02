@@ -1,0 +1,108 @@
+name: Bug Report
+description: Report a defect to help us improve the application quality
+title: '[Bug]: '
+labels: ['bug', 'triage']
+assignees:
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to file this bug report. Your feedback helps us improve the application quality.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Concise description of the defect
+      placeholder: The application returns a 500 error when attempting to create a new resource using the API endpoint...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Provide specific steps to reproduce the issue.
+      placeholder: |
+        1. Send a POST request to /api/v1/resources with payload {...}
+        2. Include authorization header with valid token
+        3. Observe the error response
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: Describe what you expected to happen.
+      placeholder: The API should create a new resource and return a 201 Created status with the resource ID.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: Describe what actually happened.
+      placeholder: The API returns a 500 Internal Server Error with the message "Unable to process request".
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How severely does this bug impact functionality?
+      options:
+        - Critical (System unusable, data loss)
+        - Major (Significant feature broken)
+        - Moderate (Feature works but with limitations)
+        - Minor (Cosmetic or inconvenience)
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs/Error Messages
+      description: Include any logs or error messages (remember to remove sensitive information).
+      placeholder: 'Error message or stack trace...'
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Possible Solution
+      description: If you have suggestions on how to fix the issue, please share them.
+      placeholder: The issue might be related to input validation in the controller...
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots/Files
+      description: If applicable, add screenshots or example files demonstrating the issue.
+      placeholder: Attach or paste screenshots here.
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other relevant information about the problem here.
+      placeholder: Additional details that might help in understanding or resolving the issue.
+    validations:
+      required: false
+
+  - type: textarea
+    id: reference
+    attributes:
+      label: Related
+      description: Link to associated issue if applicable
+      placeholder: 'PROJ-123: User authentication improvements'
+    validations:
+      required: false

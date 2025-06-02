@@ -1,0 +1,87 @@
+name: Feature request
+description: Request implementation of new functionality or capability
+title: '[Feature]: '
+labels: ['feature']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🚀 Feature Request
+
+        Request development of new feature functionality. Provide clear requirements and implementation context for development team evaluation.
+
+  - type: textarea
+    id: feature-summary
+    attributes:
+      label: Feature Overview
+      description: Brief description of the requested functionality
+      placeholder: Add ability to filter property listings by multiple criteria simultaneously
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed Solution
+      description: Describe your proposed feature or enhancement in detail.
+      placeholder: Implement a comprehensive filtering system that allows querying resources with multiple parameters...
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical-approach
+    attributes:
+      label: Technical Implementation Notes
+      description: Suggested technical approach or constraints to consider
+      placeholder: |
+        - Add new query parameters to the GET /resources endpoint
+        - Implement MongoDB aggregation pipeline to efficiently process filter conditions
+        - Update documentation to reflect new filtering capabilities
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Business Priority
+      description: How important is this feature to you?
+      options:
+        - Critical (Blocking operations)
+        - High (Major improvement)
+        - Medium (Significant enhancement)
+        - Low (Nice to have)
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Measurable requirements and criteria for feature completion
+      placeholder: |
+        - [ ] API supports filtering by all resource attributes
+        - [ ] Response time remains under 200ms for complex queries
+        - [ ] Pagination works correctly with filters
+        - [ ] Documentation provides examples of all filter options
+    validations:
+      required: true
+
+  - type: textarea
+    id: related-work
+    attributes:
+      label: Related Issues or Documentation
+      description: Links to related GitHub issues or external references
+      placeholder: |
+        - Related to Issues: #123
+        - Documentation: xyz'
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Provide any additional information, screenshots, or examples that might help explain your request.
+      value: Include diagrams, mockups, or links to similar implementations.
+    validations:
+      required: false
