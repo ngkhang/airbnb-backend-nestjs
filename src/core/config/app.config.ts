@@ -13,6 +13,7 @@ export interface AppConfig {
   port: number;
   basePath: string;
   version: number;
+  swaggerResource: string;
 }
 
 enum Environment {
@@ -44,6 +45,9 @@ class EnvVariables {
 
   @IsInt()
   APP_VERSION: number;
+
+  @IsString()
+  APP_SWAGGER_RESOURCE: string;
 }
 
 export default registerAs(envKeys.app, (): AppConfig => {
@@ -57,5 +61,6 @@ export default registerAs(envKeys.app, (): AppConfig => {
     port: validated.APP_PORT,
     basePath: validated.APP_BASE_PATH,
     version: validated.APP_VERSION,
+    swaggerResource: validated.APP_SWAGGER_RESOURCE,
   };
 });
