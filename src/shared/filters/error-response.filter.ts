@@ -12,13 +12,14 @@ export class ErrorResponseExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
     const statusCode = exception.getStatus();
 
-    const { message } = <Pick<ErrorApiResponseDto, 'message'>>exception.getResponse();
+    const { message, errors } = <Pick<ErrorApiResponseDto, 'message' | 'errors'>>exception.getResponse();
 
     const errorResponse: ErrorApiResponseDto = {
       isSuccess: false,
       statusCode,
       message,
       data: null,
+      errors,
       timestamp: new Date().toISOString(),
       requestPath: request.url,
     };

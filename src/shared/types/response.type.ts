@@ -1,20 +1,36 @@
-export interface ApiResponse<T> {
-  statusCode: number;
-  data: T;
+import type { ErrorCode } from '../constants/errorCodes';
+
+// Core response types
+interface BaseApiResponse<T> {
   message: string;
+  data: T;
 }
 
-type SuccessResponse<T> = Pick<ApiResponse<T>, 'data' | 'message'>;
-type ErrorResponse = Pick<ApiResponse<null>, 'message' | 'statusCode'>;
+interface ApiErrorDetail {
+  message: string;
+  code: ErrorCode;
+  field?: string;
+  value?: unknown;
+}
+
+interface SuccessResponse<T> extends BaseApiResponse<T> {
+  isSuccess: true;
+}
+
+interface ErrorResponse extends Pick<BaseApiResponse<null>, 'message'> {
+  isSuccess: false;
+  statusCode: number;
+  errors: ApiErrorDetail[];
+}
+
+type ApiResult<T> = SuccessResponse<T> | ErrorResponse;
 
 /**
- * Standardized response type for the service layer.
+ * Service layer types
  */
-export type ServiceResponse<T> = Promise<
-  ({ isSuccess: true } & SuccessResponse<T>) | ({ isSuccess: false } & ErrorResponse)
->;
+export type ServiceResponse<T> = Promise<ApiResult<T>>;
 
 /**
- * Standardized response type for the controller layer.
+ * Controller layer types (simplified for HTTP responses)
  */
-export type ControllerResponse<T> = Promise<Pick<ApiResponse<T>, 'data' | 'message'>>;
+export type ControllerResponse<T> = Promise<BaseApiResponse<T>>;

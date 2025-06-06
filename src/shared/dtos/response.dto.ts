@@ -1,21 +1,23 @@
-/**
- * The api response DTO
- */
-class ApiResponseDto<T> {
+class ApiResponseDto {
   isSuccess: boolean;
   statusCode: number;
   message: string;
-  data: T;
   timestamp: string;
   requestPath: string;
 }
 
-/**
- * The success response DTO
- */
-export class SuccessApiResponseDto<T> extends ApiResponseDto<T> {}
+class ApiErrorDetailDto {
+  message: string;
+  code: string;
+  field?: string;
+  value?: any;
+}
 
-/**
- * The error response DTO
- */
-export class ErrorApiResponseDto extends ApiResponseDto<null> {}
+export class SuccessApiResponseDto<T> extends ApiResponseDto {
+  data: T;
+}
+
+export class ErrorApiResponseDto extends ApiResponseDto {
+  data: null;
+  errors: ApiErrorDetailDto[];
+}
