@@ -7,7 +7,7 @@ import * as importPlugin from 'eslint-plugin-import';
 
 export default tseslint.config(
   {
-    ignores: ['eslint.config.mjs'],
+    ignores: ['eslint.config.mjs', 'lint-staged.config.cjs', 'commitlint.config.ts'],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
