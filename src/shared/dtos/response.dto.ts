@@ -1,6 +1,8 @@
+import type { ErrorCodes } from '../constant/errorCodes';
+
 export class ApiErrorDetailDto {
   message: string;
-  code: string;
+  code: ErrorCodes;
   field?: string;
   value?: string;
 }
