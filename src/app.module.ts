@@ -5,6 +5,7 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import appConfig from './core/config/app.config';
+import { DatabaseModule } from './core/database/database.module';
 import { ErrorResponseExceptionFilter } from './shared/filter/error-response.filter';
 import { SuccessResponseInterceptor } from './shared/interceptors/success-response.interceptor';
 
@@ -15,6 +16,7 @@ import { SuccessResponseInterceptor } from './shared/interceptors/success-respon
       envFilePath: ['.env'],
       cache: true,
     }),
+    DatabaseModule,
   ],
   controllers: [AppController],
   providers: [
