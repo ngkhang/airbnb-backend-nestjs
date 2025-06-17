@@ -22,4 +22,5 @@ export enum ErrorCodes {
    * - Prefix: RESOURCE_*
    */
   RESOURCE_NOT_FOUND = 'RESOURCE_NOT_FOUND',
+  RESOURCE_CONFLICT = 'RESOURCE_CONFLICT',
 }

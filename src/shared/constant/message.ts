@@ -11,6 +11,7 @@ export const baseMessage = {
 export const userMessage = {
   error: {
     notFound: (name: string, value: string) => `Not found ${name} with ${value}`,
+    emailAlreadyRegistered: 'An account with this email address already exists.',
   },
   success: {
     created: 'User account has been created successfully.',

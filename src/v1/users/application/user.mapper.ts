@@ -1,7 +1,7 @@
-import { binaryToUuid } from 'src/utils/uuid';
+import { binaryToUuid, generateBinaryId } from 'src/utils/uuid';
 
-import type { User, UserProfile } from '../domain/user';
-import type { user_profiles, user_credentials } from '@prisma/client';
+import type { User, UserCredential, UserProfile } from '../domain/user';
+import type { user_profiles, user_credentials, Prisma } from '@prisma/client';
 
 type UserModel = user_credentials & { profile?: user_profiles };
 
@@ -34,6 +34,19 @@ export class UserMapper {
       createdAt: credentials.created_at,
       updatedAt: credentials.updated_at,
       profile,
+    };
+  }
+
+  static toUserCredentialsCreateModel(
+    domain: Omit<UserCredential, 'id' | 'emailVerifiedAt' | 'createdAt' | 'updatedAt'>,
+  ): Prisma.user_credentialsCreateInput {
+    return {
+      id: generateBinaryId(),
+      email: domain.email,
+      password_hash: domain.password,
+      username: domain.username,
+      role: domain.role,
+      account_status: domain.status,
     };
   }
 }
