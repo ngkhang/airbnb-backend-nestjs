@@ -16,4 +16,10 @@ export enum ErrorCodes {
   AUTH_JWT_TOKEN_INVALID = 'AUTH_JWT_TOKEN_INVALID',
   AUTH_JWT_TOKEN_EXPIRED = 'AUTH_JWT_TOKEN_EXPIRED',
   AUTH_JWT_TOKEN_INCORRECT = 'AUTH_JWT_TOKEN_INCORRECT',
+
+  /**
+   * Resource: Resource conflicts/not found, etc
+   * - Prefix: RESOURCE_*
+   */
+  RESOURCE_NOT_FOUND = 'RESOURCE_NOT_FOUND',
 }
