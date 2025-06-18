@@ -25,5 +25,6 @@ export const authMessage = {
   },
   success: {
     login: 'Login successfully',
+    register: 'Register successfully',
   },
 };

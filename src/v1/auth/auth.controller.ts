@@ -10,7 +10,9 @@ import { SuccessResponseDto } from 'src/shared/dtos/response.dto';
 import { DetailedHttpException } from 'src/shared/filter/detailed-http.exception';
 
 import { AuthLoginDto } from './application/dto/auth-login.dto';
+import { AuthRegisterDto } from './application/dto/auth-register.dto';
 import { LoginResponseDto } from './application/dto/login-response.dto';
+import { RegisterResponseDto } from './application/dto/register-response.dto';
 import { AUTH_SERVICE } from './auth-di.token';
 import { AuthControllerPort } from './domain/ports/auth-controller.port';
 import { AuthServicePort } from './domain/ports/auth-service.port';
@@ -95,6 +97,63 @@ export class AuthController implements AuthControllerPort {
     return {
       data: plainToInstance(LoginResponseDto, result.data),
       message: result.message,
+    };
+  }
+
+  @ApiOperation({
+    summary: 'Register by email and password',
+  })
+  @ApiExtraModels(SuccessResponseDto, RegisterResponseDto)
+  @ApiResponse({
+    description: 'Successful',
+    status: HttpStatus.CREATED,
+    schema: {
+      allOf: [
+        { $ref: getSchemaPath(SuccessResponseDto) },
+        {
+          properties: {
+            statusCode: { example: HttpStatus.CREATED },
+            data: { $ref: getSchemaPath(RegisterResponseDto) },
+            message: { example: authMessage.success.register },
+          },
+        },
+      ],
+    },
+  })
+  @ApiResponse({
+    description: 'Email is already registered',
+    status: HttpStatus.CONFLICT,
+    example: {
+      success: false,
+      statusCode: HttpStatus.CONFLICT,
+      message: 'An account with this email address already exists.',
+      data: null,
+      errors: [
+        {
+          code: 'RESOURCE_CONFLICT',
+          message: 'Resource conflict email',
+          field: 'email',
+          value: 'user03@gmail.com',
+        },
+      ],
+      requestPath: '/api/v1/auth/email/register',
+      timestamp: '2025-06-18T08:07:35.809Z',
+    },
+  })
+  @Post(endpoints.registerEmail)
+  @HttpCode(HttpStatus.CREATED)
+  async registerByEmail(@Body() registerDto: AuthRegisterDto): Promise<ControllerResponseDto<RegisterResponseDto>> {
+    const res = await this.authService.registerByEmail(registerDto);
+
+    if (!res.success) {
+      const { errors, message, statusCode } = res;
+
+      throw new DetailedHttpException({ message, errors: [errors] }, statusCode);
+    }
+
+    return {
+      data: res.data,
+      message: authMessage.success.register,
     };
   }
 }

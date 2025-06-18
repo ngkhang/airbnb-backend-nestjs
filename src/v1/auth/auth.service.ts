@@ -59,4 +59,25 @@ export class AuthService implements AuthServicePort {
       message: success.login,
     };
   }
+
+  async registerByEmail(newUser: Pick<User, 'email' | 'password'>): ServiceReturn<{ userId: User['id'] }> {
+    const result = await this.usersService.createUser(newUser);
+
+    if (!result.success) {
+      return {
+        success: false,
+        statusCode: result.statusCode,
+        message: result.message,
+        errors: result.errors,
+      };
+    }
+
+    return {
+      success: true,
+      data: {
+        userId: result.data,
+      },
+      message: authMessage.success.register,
+    };
+  }
 }

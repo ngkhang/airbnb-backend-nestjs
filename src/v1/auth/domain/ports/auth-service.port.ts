@@ -5,4 +5,5 @@ export abstract class AuthServicePort {
   abstract loginByEmail(
     credential: Pick<User, 'email' | 'password'>,
   ): ServiceReturn<{ user: User; accessToken: string }>;
+  abstract registerByEmail(newUser: Pick<User, 'email' | 'password'>): ServiceReturn<{ userId: User['id'] }>;
 }
