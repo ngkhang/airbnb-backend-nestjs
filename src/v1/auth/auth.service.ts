@@ -1,5 +1,8 @@
 import { HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 
+import { EnvConfig, envKeys } from 'src/core/config/env-keys';
 import { ErrorCodes } from 'src/shared/constant/errorCodes';
 import { authMessage } from 'src/shared/constant/message';
 import { ServiceReturn } from 'src/shared/types/service.type';
@@ -10,12 +13,17 @@ import { User } from '../users/domain/user';
 import { USERS_SERVICE } from '../users/users-di.token';
 
 import { AuthServicePort } from './domain/ports/auth-service.port';
+import { TokenPayload } from './strategies/auth-jwt.strategy';
 
 const { error, success } = authMessage;
 
 @Injectable()
 export class AuthService implements AuthServicePort {
-  constructor(@Inject(USERS_SERVICE) private readonly usersService: UsersServicePort) {}
+  constructor(
+    @Inject(USERS_SERVICE) private readonly usersService: UsersServicePort,
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService<EnvConfig>,
+  ) {}
 
   async loginByEmail(credential: Pick<User, 'email' | 'password'>): ServiceReturn<{ user: User; accessToken: string }> {
     const user = await this.usersService.getUserByEmail(credential.email);
@@ -47,8 +55,7 @@ export class AuthService implements AuthServicePort {
       };
     }
 
-    // TODO: Generate accessToken
-    const accessToken = '';
+    const { accessToken } = await this.generateAccessToken({ userId: user.data.id, role: user.data.role });
 
     return {
       success: true,
@@ -78,6 +85,22 @@ export class AuthService implements AuthServicePort {
         userId: result.data,
       },
       message: authMessage.success.register,
+    };
+  }
+
+  private async generateAccessToken(payload: TokenPayload): Promise<{ accessToken: string }> {
+    const { jwtIssuer, jwtAuthSecretKey, jwtAuthExpiresIn } = this.configService.getOrThrow(envKeys.jwt, {
+      infer: true,
+    });
+
+    const accessToken = await this.jwtService.signAsync(payload, {
+      issuer: jwtIssuer,
+      secret: jwtAuthSecretKey,
+      expiresIn: jwtAuthExpiresIn,
+    });
+
+    return {
+      accessToken,
     };
   }
 }

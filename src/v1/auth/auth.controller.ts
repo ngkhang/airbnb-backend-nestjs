@@ -5,6 +5,7 @@ import { plainToInstance } from 'class-transformer';
 import { APP_TOKEN } from 'src/core/jwt/jwt.const';
 import { authMessage } from 'src/shared/constant/message';
 import { authResource } from 'src/shared/constant/resource-endpoints';
+import { SkipAuth } from 'src/shared/decorators/skip-auth.decorator';
 import { ControllerResponseDto } from 'src/shared/dtos/controller.dto';
 import { SuccessResponseDto } from 'src/shared/dtos/response.dto';
 import { DetailedHttpException } from 'src/shared/filter/detailed-http.exception';
@@ -21,6 +22,7 @@ const { tagDoc, prefix, endpoints } = authResource;
 
 @ApiTags(tagDoc)
 @ApiBasicAuth(APP_TOKEN)
+@SkipAuth()
 @Controller(prefix)
 export class AuthController implements AuthControllerPort {
   constructor(@Inject(AUTH_SERVICE) private readonly authService: AuthServicePort) {}

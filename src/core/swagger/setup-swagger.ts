@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { envKeys } from '../config/env-keys';
-import { APP_TOKEN } from '../jwt/jwt.const';
+import { APP_ACCESS_TOKEN, APP_TOKEN } from '../jwt/jwt.const';
 
 import type { EnvConfig } from '../config/env-keys';
 
@@ -25,6 +25,17 @@ export const setupSwagger = (app: INestApplication): void => {
         description: 'Application token is required for all endpoints',
       },
       APP_TOKEN,
+    )
+    .addBearerAuth(
+      {
+        type: 'http',
+        in: 'header',
+        scheme: 'bearer',
+        name: APP_ACCESS_TOKEN,
+        description: 'The Access token is required for endpoints that require login',
+        bearerFormat: 'JWT',
+      },
+      APP_ACCESS_TOKEN,
     )
     .setVersion(`${version}`)
     .build();

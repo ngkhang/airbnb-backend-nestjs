@@ -10,6 +10,8 @@ export interface JwtConfig {
   jwtIssuer: string;
   jwtSwaggerSecretKey: string;
   jwtSwaggerExpiresIn: string;
+  jwtAuthSecretKey: string;
+  jwtAuthExpiresIn: string;
 }
 
 class EnvVariables {
@@ -24,6 +26,14 @@ class EnvVariables {
   @IsNotEmpty()
   @IsString()
   JWT_SWAGGER_EXPIRES_IN: ms.StringValue;
+
+  @IsString()
+  @IsNotEmpty()
+  JWT_AUTH_SECRET_KEY: string;
+
+  @IsString()
+  @IsNotEmpty()
+  JWT_AUTH_EXPIRES_IN: ms.StringValue;
 }
 
 export default registerAs(envKeys.jwt, (): JwtConfig => {
@@ -33,5 +43,7 @@ export default registerAs(envKeys.jwt, (): JwtConfig => {
     jwtIssuer: validated.JWT_ISSUER,
     jwtSwaggerSecretKey: validated.JWT_SWAGGER_SECRET_KEY,
     jwtSwaggerExpiresIn: validated.JWT_SWAGGER_EXPIRES_IN,
+    jwtAuthSecretKey: validated.JWT_AUTH_SECRET_KEY,
+    jwtAuthExpiresIn: validated.JWT_AUTH_EXPIRES_IN,
   };
 });
