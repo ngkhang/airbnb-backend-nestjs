@@ -16,6 +16,29 @@ const { error, success } = userMessage;
 export class UsersService implements UsersServicePort {
   constructor(@Inject(USERS_REPOSITORY) private readonly userRepo: UsersRepositoryPort) {}
 
+  async getUserById(id: User['id']): ServiceReturn<User> {
+    const user = await this.userRepo.findById(id);
+
+    if (!user) {
+      return {
+        success: false,
+        statusCode: HttpStatus.NOT_FOUND,
+        message: error.notFound('id', id),
+        errors: {
+          code: ErrorCodes.RESOURCE_NOT_FOUND,
+          message: `${id} is not found`,
+          field: 'id',
+          value: id,
+        },
+      };
+    }
+    return {
+      success: true,
+      data: user,
+      message: baseMessage.success.default,
+    };
+  }
+
   async getUserByEmail(email: string): ServiceReturn<User> {
     const user = await this.userRepo.findByEmail(email);
 
