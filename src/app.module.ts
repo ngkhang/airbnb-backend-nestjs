@@ -10,6 +10,7 @@ import jwtConfig from './core/jwt/jwt.config';
 import { AuthSwaggerModule } from './core/swagger/swagger.module';
 import { ErrorResponseExceptionFilter } from './shared/filter/error-response.filter';
 import { SuccessResponseInterceptor } from './shared/interceptors/success-response.interceptor';
+import { AuthModule } from './v1/auth/auth.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { SuccessResponseInterceptor } from './shared/interceptors/success-respon
     }),
     DatabaseModule,
     AuthSwaggerModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [

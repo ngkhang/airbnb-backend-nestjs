@@ -17,3 +17,13 @@ export const userMessage = {
     created: 'User account has been created successfully.',
   },
 };
+
+export const authMessage = {
+  error: {
+    emailNotRegistered: 'Email address is not registered',
+    incorrectPassword: 'Password is incorrect',
+  },
+  success: {
+    login: 'Login successfully',
+  },
+};
