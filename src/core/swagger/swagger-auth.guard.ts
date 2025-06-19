@@ -1,6 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
+import { CLIENT_MESSAGES } from 'src/shared/constant/client-message';
 import { ErrorCodes } from 'src/shared/constant/errorCodes';
 import { DetailedHttpException } from 'src/shared/filter/detailed-http.exception';
 import { ApiErrorDetail } from 'src/shared/types/response.type';
@@ -14,36 +15,38 @@ export class SwaggerAuthGuard extends AuthGuard(SWAGGER_STRATEGY_KEY) {
   }
 
   handleRequest<TUser>(err: any, user: TUser, info: any): TUser {
-    if (err) {
-      throw err;
-    }
+    if (err) throw err;
 
     if (info instanceof Error) {
-      const message = 'UnAuthorization';
-      const error: ApiErrorDetail = {
+      let message = CLIENT_MESSAGES.ERROR.AUTH_TOKEN_INVALID;
+      const errorDetail: ApiErrorDetail = {
         code: ErrorCodes.AUTH_JWT_TOKEN_INVALID,
         message: 'The x-app-token invalid',
       };
+
       if (JSON.stringify(info) === '{}') {
-        error.code = ErrorCodes.AUTH_JWT_TOKEN_NOT_FOUND;
-        error.message = 'The x-app-token not found';
+        message = CLIENT_MESSAGES.ERROR.AUTH_TOKEN_MISSING;
+        errorDetail.code = ErrorCodes.AUTH_JWT_TOKEN_NOT_FOUND;
+        errorDetail.message = 'The x-app-token is require';
       } else if (info.name === 'TokenExpiredError') {
-        error.code = ErrorCodes.AUTH_JWT_TOKEN_EXPIRED;
-        error.message = 'The x-app-token has expired';
+        message = CLIENT_MESSAGES.ERROR.AUTH_TOKEN_EXPIRED;
+        errorDetail.code = ErrorCodes.AUTH_JWT_TOKEN_EXPIRED;
+        errorDetail.message = 'The x-app-token has expired';
       } else if (info.name === 'JsonWebTokenError') {
-        error.code = ErrorCodes.AUTH_JWT_TOKEN_INCORRECT;
+        message = CLIENT_MESSAGES.ERROR.AUTH_TOKEN_INCORRECT;
+        errorDetail.code = ErrorCodes.AUTH_JWT_TOKEN_INCORRECT;
 
         switch (info.message) {
           case 'invalid signature':
-            error.message = 'The secret key of x-app-token incorrect';
+            errorDetail.message = 'The x-app-token signature is invalid';
             break;
 
           case 'invalid token':
-            error.message = 'The header or payload could not be parsed';
+            errorDetail.message = 'The x-app-token is malformed';
             break;
 
           case `jwt issuer invalid. expected: airbnb-backend-nestjs`:
-            error.message = 'The issuer of x-app-token incorrect';
+            errorDetail.message = 'The x-app-token issuer is invalid';
             break;
 
           default:
@@ -54,7 +57,7 @@ export class SwaggerAuthGuard extends AuthGuard(SWAGGER_STRATEGY_KEY) {
       throw new DetailedHttpException(
         {
           message,
-          errors: [error],
+          errors: [errorDetail],
         },
         HttpStatus.UNAUTHORIZED,
       );

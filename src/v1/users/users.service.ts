@@ -1,7 +1,7 @@
 import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 
+import { CLIENT_MESSAGES } from 'src/shared/constant/client-message';
 import { ErrorCodes } from 'src/shared/constant/errorCodes';
-import { baseMessage, userMessage } from 'src/shared/constant/message';
 import { ServiceReturn } from 'src/shared/types/service.type';
 import { hashPassword } from 'src/utils/password.util';
 
@@ -9,8 +9,6 @@ import { UsersRepositoryPort } from './domain/ports/user-repository.port';
 import { UsersServicePort } from './domain/ports/user-service.port';
 import { User, UserAccountStatus, UserCredential, UserRole } from './domain/user';
 import { USERS_REPOSITORY } from './users-di.token';
-
-const { error, success } = userMessage;
 
 @Injectable()
 export class UsersService implements UsersServicePort {
@@ -23,10 +21,10 @@ export class UsersService implements UsersServicePort {
       return {
         success: false,
         statusCode: HttpStatus.NOT_FOUND,
-        message: error.notFound('id', id),
+        message: CLIENT_MESSAGES.ERROR.NOT_FOUND,
         errors: {
           code: ErrorCodes.RESOURCE_NOT_FOUND,
-          message: `${id} is not found`,
+          message: `Not found user with id ${id}`,
           field: 'id',
           value: id,
         },
@@ -35,7 +33,7 @@ export class UsersService implements UsersServicePort {
     return {
       success: true,
       data: user,
-      message: baseMessage.success.default,
+      message: CLIENT_MESSAGES.SUCCESS.OK,
     };
   }
 
@@ -46,10 +44,10 @@ export class UsersService implements UsersServicePort {
       return {
         success: false,
         statusCode: HttpStatus.NOT_FOUND,
-        message: error.notFound('user', email),
+        message: CLIENT_MESSAGES.ERROR.NOT_FOUND,
         errors: {
           code: ErrorCodes.RESOURCE_NOT_FOUND,
-          message: `${email} is not found`,
+          message: `Not found user with ${email}`,
           field: 'email',
           value: email,
         },
@@ -58,7 +56,7 @@ export class UsersService implements UsersServicePort {
     return {
       success: true,
       data: user,
-      message: baseMessage.success.default,
+      message: CLIENT_MESSAGES.SUCCESS.OK,
     };
   }
 
@@ -71,7 +69,7 @@ export class UsersService implements UsersServicePort {
       return {
         success: false,
         statusCode: HttpStatus.CONFLICT,
-        message: error.emailAlreadyRegistered,
+        message: CLIENT_MESSAGES.ERROR.AUTH_EMAIL_ALREADY_REGISTERED,
         errors: {
           code: ErrorCodes.RESOURCE_CONFLICT,
           message: 'Resource conflict email',
@@ -85,14 +83,14 @@ export class UsersService implements UsersServicePort {
       email: userCredential.email,
       password: hashPassword(userCredential.password),
       username: userCredential.email.split('@')[0],
-      role: UserRole[userCredential.role || 'USER'],
-      status: UserAccountStatus[userCredential.status || 'PENDING_VERIFICATION'],
+      role: userCredential.role || UserRole.USER,
+      status: userCredential.status || UserAccountStatus.PENDING_VERIFICATION,
     });
 
     return {
       success: true,
       data: userId,
-      message: success.created,
+      message: CLIENT_MESSAGES.SUCCESS.USER_CREATED,
     };
   }
 }

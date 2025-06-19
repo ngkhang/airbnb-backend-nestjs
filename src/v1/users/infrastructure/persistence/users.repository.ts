@@ -40,7 +40,7 @@ export class UsersRepository implements UsersRepositoryPort {
   async create(
     payload: Omit<UserCredential, 'id' | 'emailVerifiedAt' | 'createdAt' | 'updatedAt'>,
   ): Promise<User['id']> {
-    const userModel = UserMapper.toUserCredentialsCreateModel(payload);
+    const userModel = UserMapper.toPrismaCredentialsCreate(payload);
 
     const model = await this.database.user_credentials.create({
       data: userModel,

@@ -3,7 +3,7 @@ import { ApiBasicAuth, ApiExtraModels, ApiOperation, ApiResponse, ApiTags, getSc
 import { plainToInstance } from 'class-transformer';
 
 import { APP_TOKEN } from 'src/core/jwt/jwt.const';
-import { authMessage } from 'src/shared/constant/message';
+import { CLIENT_MESSAGES } from 'src/shared/constant/client-message';
 import { authResource } from 'src/shared/constant/resource-endpoints';
 import { SkipAuth } from 'src/shared/decorators/skip-auth.decorator';
 import { ControllerResponseDto } from 'src/shared/dtos/controller.dto';
@@ -41,7 +41,7 @@ export class AuthController implements AuthControllerPort {
           properties: {
             statusCode: { example: HttpStatus.OK },
             data: { $ref: getSchemaPath(LoginResponseDto) },
-            message: { example: authMessage.success.login },
+            message: { example: CLIENT_MESSAGES.SUCCESS.AUTH_LOGIN },
           },
         },
       ],
@@ -89,16 +89,16 @@ export class AuthController implements AuthControllerPort {
   @Post(endpoints.loginEmail)
   @HttpCode(HttpStatus.OK)
   async loginByEmail(@Body() credential: AuthLoginDto): Promise<ControllerResponseDto<LoginResponseDto>> {
-    const result = await this.authService.loginByEmail(credential);
+    const res = await this.authService.loginByEmail(credential);
 
-    if (!result.success) {
-      const { errors, message, statusCode } = result;
+    if (!res.success) {
+      const { errors, message, statusCode } = res;
       throw new DetailedHttpException({ message, errors: [errors] }, statusCode);
     }
 
     return {
-      data: plainToInstance(LoginResponseDto, result.data),
-      message: result.message,
+      data: plainToInstance(LoginResponseDto, res.data),
+      message: res.message,
     };
   }
 
@@ -116,7 +116,7 @@ export class AuthController implements AuthControllerPort {
           properties: {
             statusCode: { example: HttpStatus.CREATED },
             data: { $ref: getSchemaPath(RegisterResponseDto) },
-            message: { example: authMessage.success.register },
+            message: { example: CLIENT_MESSAGES.SUCCESS.AUTH_REGISTER },
           },
         },
       ],
@@ -155,7 +155,7 @@ export class AuthController implements AuthControllerPort {
 
     return {
       data: res.data,
-      message: authMessage.success.register,
+      message: res.message,
     };
   }
 }

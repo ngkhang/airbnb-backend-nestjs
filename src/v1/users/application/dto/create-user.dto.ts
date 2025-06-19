@@ -21,17 +21,17 @@ export class CreateUserDto {
   @IsString()
   @MinLength(4)
   @MaxLength(12)
-  @Matches(/(?=.*[a-z])/g, {
-    message: 'Password must container a lowercase character',
+  @Matches(/(?=.*[a-z])/, {
+    message: 'Password must contain a lowercase character',
   })
-  @Matches(/(?=.*[A-Z])/g, {
-    message: 'Password must container a uppercase character',
+  @Matches(/(?=.*[A-Z])/, {
+    message: 'Password must contain a uppercase character',
   })
-  @Matches(/(?=.*\d+)/g, {
-    message: 'Password must container a numerous',
+  @Matches(/(?=.*\d+)/, {
+    message: 'Password must contain a numerous',
   })
-  @Matches(/(?=.*\W+)/g, {
-    message: 'Password must container a specify character',
+  @Matches(/(?=.*\W+)/, {
+    message: 'Password must contain a specify character',
   })
   password: string;
 }

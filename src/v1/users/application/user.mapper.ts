@@ -37,7 +37,7 @@ export class UserMapper {
     };
   }
 
-  static toUserCredentialsCreateModel(
+  static toPrismaCredentialsCreate(
     domain: Omit<UserCredential, 'id' | 'emailVerifiedAt' | 'createdAt' | 'updatedAt'>,
   ): Prisma.user_credentialsCreateInput {
     return {

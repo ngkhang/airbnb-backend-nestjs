@@ -1,8 +1,6 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
-import { baseMessage } from 'src/shared/constant/message';
-
 /**
  * The number of rounds to use for generating the salt.
  */
@@ -20,7 +18,7 @@ export const hashPassword = (password: string): string => {
     return bcrypt.hashSync(password, SALT);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
-    throw new HttpException(baseMessage.error.hashingPasswordFail, HttpStatus.INTERNAL_SERVER_ERROR);
+    throw new HttpException('The process of hashing the password failed', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 };
 
@@ -35,6 +33,6 @@ export const comparePassword = (password: string, storeHash: string): boolean =>
     return bcrypt.compareSync(password, storeHash);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
-    throw new HttpException(baseMessage.error.comparePasswordFail, HttpStatus.INTERNAL_SERVER_ERROR);
+    throw new HttpException('The process of comparing the password failed', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 };

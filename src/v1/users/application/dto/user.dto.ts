@@ -29,6 +29,8 @@ class UserProfileDto {
   lastName: string | null;
 
   @ApiPropertyOptional({ type: String })
+  @IsString()
+  @IsOptional()
   avatar: string | null;
 
   @ApiPropertyOptional({ type: String })
@@ -48,14 +50,12 @@ class UserProfileDto {
 
   @ApiProperty({
     enumName: 'Gender',
-    enum: Object.keys(Gender).filter((key) => isNaN(Number(key))),
+    enum: Gender,
     example: Gender.MALE,
   })
   @IsString()
   @IsEnum(Gender, {
-    message: `Gender must be one of the following values: ${Object.keys(Gender)
-      .filter((key) => isNaN(Number(key)))
-      .join(', ')}`,
+    message: `Gender must be one of the following values: ${Object.values(Gender).join(', ')}`,
   })
   gender: keyof typeof Gender;
 
@@ -105,14 +105,12 @@ export class UserDto {
 
   @ApiProperty({
     enumName: 'UserRole',
-    enum: Object.keys(UserRole).filter((key) => isNaN(Number(key))),
+    enum: UserRole,
     example: UserRole.USER,
   })
   @IsString()
   @IsEnum(UserRole, {
-    message: `Role must be one of the following values: ${Object.keys(UserRole)
-      .filter((key) => isNaN(Number(key)))
-      .join(', ')}`,
+    message: `Role must be one of the following values: ${Object.values(UserRole).join(', ')}`,
   })
   role: keyof typeof UserRole;
 
@@ -123,9 +121,7 @@ export class UserDto {
   })
   @IsString()
   @IsEnum(UserAccountStatus, {
-    message: `Status must be one of the following values: ${Object.keys(UserAccountStatus)
-      .filter((key) => isNaN(Number(key)))
-      .join(', ')}`,
+    message: `Status must be one of the following values: ${Object.values(UserAccountStatus).join(', ')}`,
   })
   status: keyof typeof UserAccountStatus;
 

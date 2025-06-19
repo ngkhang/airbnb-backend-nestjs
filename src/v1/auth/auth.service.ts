@@ -3,8 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
 import { EnvConfig, envKeys } from 'src/core/config/env-keys';
+import { AuthJwtPayload } from 'src/core/jwt/jwt.type';
+import { CLIENT_MESSAGES } from 'src/shared/constant/client-message';
 import { ErrorCodes } from 'src/shared/constant/errorCodes';
-import { authMessage } from 'src/shared/constant/message';
 import { ServiceReturn } from 'src/shared/types/service.type';
 import { comparePassword } from 'src/utils/password.util';
 
@@ -13,9 +14,6 @@ import { User } from '../users/domain/user';
 import { USERS_SERVICE } from '../users/users-di.token';
 
 import { AuthServicePort } from './domain/ports/auth-service.port';
-import { TokenPayload } from './strategies/auth-jwt.strategy';
-
-const { error, success } = authMessage;
 
 @Injectable()
 export class AuthService implements AuthServicePort {
@@ -32,7 +30,7 @@ export class AuthService implements AuthServicePort {
       return {
         success: user.success,
         statusCode: HttpStatus.NOT_FOUND,
-        message: error.emailNotRegistered,
+        message: CLIENT_MESSAGES.ERROR.AUTH_EMAIL_NOT_REGISTERED,
         errors: {
           code: ErrorCodes.RESOURCE_NOT_FOUND,
           message: `Not found user with ${credential.email}`,
@@ -46,10 +44,10 @@ export class AuthService implements AuthServicePort {
       return {
         success: false,
         statusCode: HttpStatus.UNAUTHORIZED,
-        message: error.incorrectPassword,
+        message: CLIENT_MESSAGES.ERROR.AUTH_PASSWORD_INCORRECT,
         errors: {
           code: ErrorCodes.AUTH_UNAUTHORIZED,
-          message: 'Authentication failed',
+          message: 'Password compare failed',
           field: 'password',
         },
       };
@@ -63,7 +61,7 @@ export class AuthService implements AuthServicePort {
         user: user.data,
         accessToken,
       },
-      message: success.login,
+      message: CLIENT_MESSAGES.SUCCESS.AUTH_LOGIN,
     };
   }
 
@@ -84,11 +82,11 @@ export class AuthService implements AuthServicePort {
       data: {
         userId: result.data,
       },
-      message: authMessage.success.register,
+      message: CLIENT_MESSAGES.SUCCESS.AUTH_REGISTER,
     };
   }
 
-  private async generateAccessToken(payload: TokenPayload): Promise<{ accessToken: string }> {
+  private async generateAccessToken(payload: AuthJwtPayload): Promise<{ accessToken: string }> {
     const { jwtIssuer, jwtAuthSecretKey, jwtAuthExpiresIn } = this.configService.getOrThrow(envKeys.jwt, {
       infer: true,
     });

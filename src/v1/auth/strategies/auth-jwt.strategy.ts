@@ -5,21 +5,12 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { EnvConfig, envKeys } from 'src/core/config/env-keys';
 import { AUTH_STRATEGY_KEY } from 'src/core/jwt/jwt.const';
+import { AuthJwtPayload, JwtPayload } from 'src/core/jwt/jwt.type';
+import { CLIENT_MESSAGES } from 'src/shared/constant/client-message';
 import { ErrorCodes } from 'src/shared/constant/errorCodes';
 import { DetailedHttpException } from 'src/shared/filter/detailed-http.exception';
 import { UsersServicePort } from 'src/v1/users/domain/ports/user-service.port';
 import { USERS_SERVICE } from 'src/v1/users/users-di.token';
-
-export interface TokenPayload {
-  userId: string;
-  role: string;
-}
-
-interface AuthJwtPayload extends Partial<TokenPayload> {
-  iss: string;
-  iat: number;
-  exp: number;
-}
 
 @Injectable()
 export class AuthJwtStrategy extends PassportStrategy(Strategy, AUTH_STRATEGY_KEY) {
@@ -37,17 +28,31 @@ export class AuthJwtStrategy extends PassportStrategy(Strategy, AUTH_STRATEGY_KE
     });
   }
 
-  async validate(payload: AuthJwtPayload): Promise<AuthJwtPayload> {
-    const { userId, role } = payload;
+  async validate(payload: JwtPayload & Partial<AuthJwtPayload>): Promise<JwtPayload & AuthJwtPayload> {
+    const message = CLIENT_MESSAGES.ERROR.AUTH_TOKEN_INCORRECT;
+    const code = ErrorCodes.AUTH_JWT_TOKEN_INVALID;
 
-    if (!userId || !role) {
+    if (!payload.userId || !payload.role) {
       throw new DetailedHttpException(
         {
-          message: 'UnAuthorization',
+          message,
+          errors: [{ code, message: 'The payload of access toke is missing userId or role' }],
+        },
+
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    const user = await this.userService.getUserById(payload.userId);
+
+    if (!user.success) {
+      throw new DetailedHttpException(
+        {
+          message,
           errors: [
             {
-              code: ErrorCodes.AUTH_JWT_TOKEN_INCORRECT,
-              message: 'The payload incorrect',
+              code,
+              message: 'The user ID is not found',
             },
           ],
         },
@@ -55,16 +60,14 @@ export class AuthJwtStrategy extends PassportStrategy(Strategy, AUTH_STRATEGY_KE
       );
     }
 
-    const user = await this.userService.getUserById(userId);
-
-    if (!user.success || user.data.role !== role) {
+    if (user.data.role !== payload.role) {
       throw new DetailedHttpException(
         {
-          message: 'UnAuthorization',
+          message,
           errors: [
             {
-              code: ErrorCodes.AUTH_JWT_TOKEN_INVALID,
-              message: 'The payload invalid',
+              code,
+              message: 'The role does not match',
             },
           ],
         },
@@ -72,6 +75,12 @@ export class AuthJwtStrategy extends PassportStrategy(Strategy, AUTH_STRATEGY_KE
       );
     }
 
-    return payload;
+    return {
+      iss: payload.iss,
+      iat: payload.iat,
+      exp: payload.exp,
+      userId: user.data.id,
+      role: user.data.role,
+    };
   }
 }
