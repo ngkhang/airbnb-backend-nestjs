@@ -1,4 +1,6 @@
-import type { ErrorCodes } from '../constant/errorCodes';
+// import type { ErrorCodes } from '../constant/errorCodes';
+
+import type { ErrorCodes } from '../constant/message';
 
 export interface ApiErrorDetail {
   code: ErrorCodes;
@@ -12,7 +14,7 @@ export interface ApiResponse<TData> {
   message: string;
   statusCode: number;
   data: TData;
-  errors: ApiErrorDetail;
+  errors: ApiErrorDetail | ApiErrorDetail[];
   timestamp: string;
   requestPath: string;
 }

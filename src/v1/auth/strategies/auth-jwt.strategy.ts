@@ -6,9 +6,9 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { EnvConfig, envKeys } from 'src/core/config/env-keys';
 import { AUTH_STRATEGY_KEY } from 'src/core/jwt/jwt.const';
 import { AuthJwtPayload, JwtPayload } from 'src/core/jwt/jwt.type';
-import { CLIENT_MESSAGES } from 'src/shared/constant/client-message';
-import { ErrorCodes } from 'src/shared/constant/errorCodes';
+import { ClientErrorMessages, ErrorCodes, ServerErrorMessages } from 'src/shared/constant/message';
 import { DetailedHttpException } from 'src/shared/filter/detailed-http.exception';
+import { ApiErrorDetail } from 'src/shared/types/response.type';
 import { UsersServicePort } from 'src/v1/users/domain/ports/user-service.port';
 import { USERS_SERVICE } from 'src/v1/users/users-di.token';
 
@@ -29,14 +29,20 @@ export class AuthJwtStrategy extends PassportStrategy(Strategy, AUTH_STRATEGY_KE
   }
 
   async validate(payload: JwtPayload & Partial<AuthJwtPayload>): Promise<JwtPayload & AuthJwtPayload> {
-    const message = CLIENT_MESSAGES.ERROR.AUTH_TOKEN_INCORRECT;
-    const code = ErrorCodes.AUTH_JWT_TOKEN_INVALID;
+    const message = ClientErrorMessages.TOKEN_INCORRECT;
+    const errorDetail: ApiErrorDetail = {
+      code: ErrorCodes.TOKEN_INVALID,
+      message: ServerErrorMessages.TOKEN_INVALID,
+    };
 
     if (!payload.userId || !payload.role) {
       throw new DetailedHttpException(
         {
           message,
-          errors: [{ code, message: 'The payload of access toke is missing userId or role' }],
+          errors: {
+            ...errorDetail,
+            field: !payload.userId ? 'userId' : 'role',
+          },
         },
 
         HttpStatus.UNAUTHORIZED,
@@ -49,12 +55,10 @@ export class AuthJwtStrategy extends PassportStrategy(Strategy, AUTH_STRATEGY_KE
       throw new DetailedHttpException(
         {
           message,
-          errors: [
-            {
-              code,
-              message: 'The user ID is not found',
-            },
-          ],
+          errors: {
+            ...errorDetail,
+            field: 'userId',
+          },
         },
         HttpStatus.UNAUTHORIZED,
       );
@@ -64,12 +68,10 @@ export class AuthJwtStrategy extends PassportStrategy(Strategy, AUTH_STRATEGY_KE
       throw new DetailedHttpException(
         {
           message,
-          errors: [
-            {
-              code,
-              message: 'The role does not match',
-            },
-          ],
+          errors: {
+            ...errorDetail,
+            field: 'role',
+          },
         },
         HttpStatus.UNAUTHORIZED,
       );

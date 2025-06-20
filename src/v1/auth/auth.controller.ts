@@ -3,7 +3,7 @@ import { ApiBasicAuth, ApiExtraModels, ApiOperation, ApiResponse, ApiTags, getSc
 import { plainToInstance } from 'class-transformer';
 
 import { APP_TOKEN } from 'src/core/jwt/jwt.const';
-import { CLIENT_MESSAGES } from 'src/shared/constant/client-message';
+import { SuccessMessages } from 'src/shared/constant/message';
 import { authResource } from 'src/shared/constant/resource-endpoints';
 import { SkipAuth } from 'src/shared/decorators/skip-auth.decorator';
 import { ControllerResponseDto } from 'src/shared/dtos/controller.dto';
@@ -41,7 +41,7 @@ export class AuthController implements AuthControllerPort {
           properties: {
             statusCode: { example: HttpStatus.OK },
             data: { $ref: getSchemaPath(LoginResponseDto) },
-            message: { example: CLIENT_MESSAGES.SUCCESS.AUTH_LOGIN },
+            message: { example: SuccessMessages.LOGIN },
           },
         },
       ],
@@ -52,18 +52,16 @@ export class AuthController implements AuthControllerPort {
     status: HttpStatus.UNAUTHORIZED,
     example: {
       success: false,
-      statusCode: 401,
+      statusCode: HttpStatus.UNAUTHORIZED,
       message: 'Password is incorrect',
       data: null,
-      errors: [
-        {
-          code: 'AUTH_UNAUTHORIZED',
-          message: 'Authentication failed',
-          field: 'password',
-        },
-      ],
+      errors: {
+        code: 'AUTH_UNAUTHORIZED',
+        message: 'Password compare failed',
+        field: 'password',
+      },
       requestPath: '/api/v1/auth/email/login',
-      timestamp: '2025-06-18T07:08:06.906Z',
+      timestamp: '2025-06-20T12:45:07.627Z',
     },
   })
   @ApiResponse({
@@ -74,16 +72,14 @@ export class AuthController implements AuthControllerPort {
       statusCode: HttpStatus.NOT_FOUND,
       message: 'Email address is not registered',
       data: null,
-      errors: [
-        {
-          code: 'RESOURCE_NOT_FOUND',
-          message: 'Not found user with user0@gmail.com',
-          field: 'email',
-          value: 'user0@gmail.com',
-        },
-      ],
+      errors: {
+        code: 'RESOURCE_NOT_FOUND',
+        message: 'Not found user with users01@gmail.com',
+        field: 'email',
+        value: 'users01@gmail.com',
+      },
       requestPath: '/api/v1/auth/email/login',
-      timestamp: '2025-06-18T07:06:54.269Z',
+      timestamp: '2025-06-20T12:45:32.088Z',
     },
   })
   @Post(endpoints.loginEmail)
@@ -93,7 +89,7 @@ export class AuthController implements AuthControllerPort {
 
     if (!res.success) {
       const { errors, message, statusCode } = res;
-      throw new DetailedHttpException({ message, errors: [errors] }, statusCode);
+      throw new DetailedHttpException({ message, errors }, statusCode);
     }
 
     return {
@@ -116,7 +112,7 @@ export class AuthController implements AuthControllerPort {
           properties: {
             statusCode: { example: HttpStatus.CREATED },
             data: { $ref: getSchemaPath(RegisterResponseDto) },
-            message: { example: CLIENT_MESSAGES.SUCCESS.AUTH_REGISTER },
+            message: { example: SuccessMessages.REGISTER },
           },
         },
       ],
@@ -128,18 +124,16 @@ export class AuthController implements AuthControllerPort {
     example: {
       success: false,
       statusCode: HttpStatus.CONFLICT,
-      message: 'An account with this email address already exists.',
+      message: 'An account with this email address already exists',
       data: null,
-      errors: [
-        {
-          code: 'RESOURCE_CONFLICT',
-          message: 'Resource conflict email',
-          field: 'email',
-          value: 'user03@gmail.com',
-        },
-      ],
+      errors: {
+        code: 'RESOURCE_CONFLICT',
+        message: 'Resource conflict email',
+        field: 'email',
+        value: 'users01@gmail.com',
+      },
       requestPath: '/api/v1/auth/email/register',
-      timestamp: '2025-06-18T08:07:35.809Z',
+      timestamp: '2025-06-20T12:48:09.086Z',
     },
   })
   @Post(endpoints.registerEmail)
@@ -150,7 +144,7 @@ export class AuthController implements AuthControllerPort {
     if (!res.success) {
       const { errors, message, statusCode } = res;
 
-      throw new DetailedHttpException({ message, errors: [errors] }, statusCode);
+      throw new DetailedHttpException({ message, errors }, statusCode);
     }
 
     return {

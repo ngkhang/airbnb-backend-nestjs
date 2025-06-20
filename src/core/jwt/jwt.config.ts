@@ -2,7 +2,7 @@ import { registerAs } from '@nestjs/config';
 import { IsNotEmpty, IsString } from 'class-validator';
 import ms from 'ms';
 
-import { validateEnv } from 'src/utils/env-validation';
+import { validateEnv } from 'src/shared/validation/env-validation';
 
 import { envKeys } from '../config/env-keys';
 

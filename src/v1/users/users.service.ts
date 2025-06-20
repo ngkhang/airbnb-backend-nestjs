@@ -1,7 +1,6 @@
 import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 
-import { CLIENT_MESSAGES } from 'src/shared/constant/client-message';
-import { ErrorCodes } from 'src/shared/constant/errorCodes';
+import { ClientErrorMessages, ErrorCodes, ServerErrorMessages, SuccessMessages } from 'src/shared/constant/message';
 import { ServiceReturn } from 'src/shared/types/service.type';
 import { hashPassword } from 'src/utils/password.util';
 
@@ -21,10 +20,10 @@ export class UsersService implements UsersServicePort {
       return {
         success: false,
         statusCode: HttpStatus.NOT_FOUND,
-        message: CLIENT_MESSAGES.ERROR.NOT_FOUND,
+        message: ClientErrorMessages.RESOURCE_NOT_FOUND,
         errors: {
           code: ErrorCodes.RESOURCE_NOT_FOUND,
-          message: `Not found user with id ${id}`,
+          message: ServerErrorMessages.RESOURCE_NOT_FOUND,
           field: 'id',
           value: id,
         },
@@ -33,7 +32,7 @@ export class UsersService implements UsersServicePort {
     return {
       success: true,
       data: user,
-      message: CLIENT_MESSAGES.SUCCESS.OK,
+      message: SuccessMessages.GENERIC,
     };
   }
 
@@ -44,10 +43,10 @@ export class UsersService implements UsersServicePort {
       return {
         success: false,
         statusCode: HttpStatus.NOT_FOUND,
-        message: CLIENT_MESSAGES.ERROR.NOT_FOUND,
+        message: ClientErrorMessages.RESOURCE_NOT_FOUND,
         errors: {
           code: ErrorCodes.RESOURCE_NOT_FOUND,
-          message: `Not found user with ${email}`,
+          message: ServerErrorMessages.RESOURCE_NOT_FOUND,
           field: 'email',
           value: email,
         },
@@ -56,7 +55,7 @@ export class UsersService implements UsersServicePort {
     return {
       success: true,
       data: user,
-      message: CLIENT_MESSAGES.SUCCESS.OK,
+      message: SuccessMessages.GENERIC,
     };
   }
 
@@ -69,10 +68,10 @@ export class UsersService implements UsersServicePort {
       return {
         success: false,
         statusCode: HttpStatus.CONFLICT,
-        message: CLIENT_MESSAGES.ERROR.AUTH_EMAIL_ALREADY_REGISTERED,
+        message: ClientErrorMessages.EMAIL_ALREADY_EXISTS,
         errors: {
           code: ErrorCodes.RESOURCE_CONFLICT,
-          message: 'Resource conflict email',
+          message: ServerErrorMessages.RESOURCE_CONFLICT,
           field: 'email',
           value: userCredential.email,
         },
@@ -90,7 +89,7 @@ export class UsersService implements UsersServicePort {
     return {
       success: true,
       data: userId,
-      message: CLIENT_MESSAGES.SUCCESS.USER_CREATED,
+      message: SuccessMessages.USER_CREATED,
     };
   }
 }

@@ -3,8 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import { CLIENT_MESSAGES } from 'src/shared/constant/client-message';
-import { ErrorCodes } from 'src/shared/constant/errorCodes';
+import { ClientErrorMessages, ErrorCodes, ServerErrorMessages } from 'src/shared/constant/message';
 import { DetailedHttpException } from 'src/shared/filter/detailed-http.exception';
 
 import { EnvConfig, envKeys } from '../config/env-keys';
@@ -28,11 +27,12 @@ export class SwaggerJwtStrategy extends PassportStrategy(Strategy, SWAGGER_STRAT
     if (!payload.sub) {
       throw new DetailedHttpException(
         {
-          message: CLIENT_MESSAGES.ERROR.AUTH_TOKEN_INCORRECT,
+          message: ClientErrorMessages.TOKEN_INCORRECT,
           errors: [
             {
-              code: ErrorCodes.AUTH_JWT_TOKEN_INVALID,
-              message: 'The payload of x-app-token is missing sub field',
+              code: ErrorCodes.TOKEN_INVALID,
+              message: ServerErrorMessages.TOKEN_INVALID,
+              field: 'sub',
             },
           ],
         },

@@ -1,7 +1,7 @@
 import { registerAs } from '@nestjs/config';
 import { IsEnum, IsInt, IsNotEmpty, IsNumber, IsString, Max, Min } from 'class-validator';
 
-import { validateEnv } from 'src/utils/env-validation';
+import { validateEnv } from 'src/shared/validation/env-validation';
 
 import { envKeys } from './env-keys';
 

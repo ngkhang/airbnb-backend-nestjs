@@ -1,7 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
 import { ApiProperty, ApiPropertyOptional, ApiSchema } from '@nestjs/swagger';
 
-import { ErrorCodes } from '../constant/errorCodes';
+import { ErrorCodes } from '../constant/message';
 
 @ApiSchema({
   name: 'ApiErrorDetailDto',
@@ -17,7 +17,7 @@ export class ApiErrorDetailDto {
   @ApiProperty({
     enum: ErrorCodes,
     description: 'Error code identifier',
-    example: ErrorCodes.SYSTEM_INTERNAL_ERROR,
+    example: ErrorCodes.INTERNAL_ERROR,
   })
   code: ErrorCodes;
 
@@ -125,7 +125,7 @@ export class ErrorResponseDto {
     description: 'Error details',
     isArray: true,
   })
-  errors: ApiErrorDetailDto[];
+  errors: ApiErrorDetailDto | ApiErrorDetailDto[];
 
   @ApiProperty({
     type: String,

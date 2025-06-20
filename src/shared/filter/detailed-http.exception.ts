@@ -1,14 +1,11 @@
-import { HttpException } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
-import type { ApiErrorDetail } from '../types/response.type';
+import type { ApiResponse } from '../types/response.type';
 
-export interface DetailedErrorPayload {
-  message: string;
-  errors: ApiErrorDetail[];
-}
+export type DetailedErrorPayload = Pick<ApiResponse<null>, 'message' | 'errors'>;
 
 export class DetailedHttpException extends HttpException {
-  constructor(payload: DetailedErrorPayload, status: number) {
+  constructor(payload: DetailedErrorPayload, status: number = HttpStatus.INTERNAL_SERVER_ERROR) {
     super(payload, status);
   }
 }

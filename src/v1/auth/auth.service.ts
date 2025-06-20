@@ -4,8 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 
 import { EnvConfig, envKeys } from 'src/core/config/env-keys';
 import { AuthJwtPayload } from 'src/core/jwt/jwt.type';
-import { CLIENT_MESSAGES } from 'src/shared/constant/client-message';
-import { ErrorCodes } from 'src/shared/constant/errorCodes';
+import { ClientErrorMessages, ErrorCodes, ServerErrorMessages, SuccessMessages } from 'src/shared/constant/message';
 import { ServiceReturn } from 'src/shared/types/service.type';
 import { comparePassword } from 'src/utils/password.util';
 
@@ -30,10 +29,10 @@ export class AuthService implements AuthServicePort {
       return {
         success: user.success,
         statusCode: HttpStatus.NOT_FOUND,
-        message: CLIENT_MESSAGES.ERROR.AUTH_EMAIL_NOT_REGISTERED,
+        message: ClientErrorMessages.EMAIL_NOT_REGISTERED,
         errors: {
           code: ErrorCodes.RESOURCE_NOT_FOUND,
-          message: `Not found user with ${credential.email}`,
+          message: ServerErrorMessages.RESOURCE_NOT_FOUND,
           field: 'email',
           value: credential.email,
         },
@@ -44,10 +43,10 @@ export class AuthService implements AuthServicePort {
       return {
         success: false,
         statusCode: HttpStatus.UNAUTHORIZED,
-        message: CLIENT_MESSAGES.ERROR.AUTH_PASSWORD_INCORRECT,
+        message: ClientErrorMessages.PASSWORD_INCORRECT,
         errors: {
           code: ErrorCodes.AUTH_UNAUTHORIZED,
-          message: 'Password compare failed',
+          message: ServerErrorMessages.AUTH_UNAUTHORIZED,
           field: 'password',
         },
       };
@@ -61,7 +60,7 @@ export class AuthService implements AuthServicePort {
         user: user.data,
         accessToken,
       },
-      message: CLIENT_MESSAGES.SUCCESS.AUTH_LOGIN,
+      message: SuccessMessages.LOGIN,
     };
   }
 
@@ -82,7 +81,7 @@ export class AuthService implements AuthServicePort {
       data: {
         userId: result.data,
       },
-      message: CLIENT_MESSAGES.SUCCESS.AUTH_REGISTER,
+      message: SuccessMessages.REGISTER,
     };
   }
 

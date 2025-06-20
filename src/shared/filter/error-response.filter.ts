@@ -1,6 +1,7 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException } from '@nestjs/common';
 import { Request, Response } from 'express';
 
+import { ClientErrorMessages } from '../constant/message';
 import { ApiErrorDetailDto, ErrorResponseDto } from '../dtos/response.dto';
 
 import { DetailedErrorPayload, DetailedHttpException } from './detailed-http.exception';
@@ -20,15 +21,16 @@ export class ErrorResponseExceptionFilter implements ExceptionFilter {
       statusCode,
       message,
       data: null,
-      errors: errors || [],
+      errors,
       requestPath: request.url,
       timestamp: new Date().toISOString(),
     });
   }
 
-  private extractErrorDetails(exception: HttpException): { message: string; errors?: ApiErrorDetailDto[] | null } {
+  private extractErrorDetails(exception: HttpException): DetailedErrorPayload {
     const rawResponse = exception.getResponse();
 
+    // Handle DetailedHttpException
     if (exception instanceof DetailedHttpException) {
       const payload = <DetailedErrorPayload>rawResponse;
 
@@ -38,25 +40,28 @@ export class ErrorResponseExceptionFilter implements ExceptionFilter {
       };
     }
 
+    // Handle standard HttpException
+    let message = ClientErrorMessages.INTERNAL_ERROR;
+    let errors: ApiErrorDetailDto[] = [];
+
     if (typeof rawResponse === 'string') {
       return {
         message: rawResponse,
-        errors: [],
-      };
-    }
-
-    if ('message' in rawResponse) {
-      const message = <string>rawResponse.message;
-      const errors = 'errors' in rawResponse ? <ApiErrorDetailDto[]>rawResponse.errors : null;
-
-      return {
-        message,
         errors,
       };
     }
 
-    return {
-      message: 'Internal Server Error',
-    };
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (rawResponse !== null && typeof rawResponse === 'object') {
+      if ('message' in rawResponse) {
+        message = String(rawResponse.message);
+      }
+
+      if ('errors' in rawResponse && Array.isArray(rawResponse.errors)) {
+        errors = <ApiErrorDetailDto[]>rawResponse.errors;
+      }
+    }
+
+    return { message, errors };
   }
 }

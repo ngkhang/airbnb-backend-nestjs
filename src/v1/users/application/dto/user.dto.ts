@@ -1,15 +1,19 @@
 import { ApiHideProperty, ApiProperty, ApiPropertyOptional, ApiSchema } from '@nestjs/swagger';
 import { Exclude, Type } from 'class-transformer';
 import {
-  IsDate,
+  IsDateString,
   IsEmail,
   IsEnum,
   IsNotEmpty,
   IsOptional,
   IsPhoneNumber,
   IsString,
+  IsUrl,
+  IsUUID,
   ValidateNested,
 } from 'class-validator';
+
+import { ValidationMessages } from 'src/shared/validation/message.validation';
 
 import { Gender, UserAccountStatus, UserRole } from '../../domain/user';
 
@@ -19,43 +23,42 @@ import { Gender, UserAccountStatus, UserRole } from '../../domain/user';
 })
 class UserProfileDto {
   @ApiPropertyOptional({ type: String })
-  @IsString()
+  @IsString({ message: ValidationMessages.mustString('firstName') })
   @IsOptional()
   firstName: string | null;
 
   @ApiPropertyOptional({ type: String })
-  @IsString()
+  @IsString({ message: ValidationMessages.mustString('lastName') })
   @IsOptional()
   lastName: string | null;
 
   @ApiPropertyOptional({ type: String })
-  @IsString()
+  @IsUrl({}, { message: ValidationMessages.mustBeValidType('avatar', 'URL') })
   @IsOptional()
   avatar: string | null;
 
   @ApiPropertyOptional({ type: String })
-  @IsPhoneNumber()
+  @IsPhoneNumber(undefined, { message: ValidationMessages.mustBeValidType('phoneNumber', 'phone number') })
   @IsOptional()
   phoneNumber: string | null;
 
   @ApiPropertyOptional({ type: String })
-  @IsString()
+  @IsString({ message: ValidationMessages.mustString('bio') })
   @IsOptional()
   bio: string | null;
 
   @ApiPropertyOptional({ type: String })
-  @IsDate()
+  @IsDateString({}, { message: ValidationMessages.mustBeValidType('dateOfBirth', 'date string') })
   @IsOptional()
-  dateOfBirth: Date | null;
+  dateOfBirth: string | null;
 
   @ApiProperty({
     enumName: 'Gender',
     enum: Gender,
     example: Gender.MALE,
   })
-  @IsString()
   @IsEnum(Gender, {
-    message: `Gender must be one of the following values: ${Object.values(Gender).join(', ')}`,
+    message: ValidationMessages.mustBeFollowValues('gender', Object.values(Gender)),
   })
   gender: keyof typeof Gender;
 
@@ -63,15 +66,15 @@ class UserProfileDto {
     type: String,
     example: new Date().toISOString(),
   })
-  @IsDate()
-  createdAt: Date;
+  @IsDateString({}, { message: ValidationMessages.mustBeValidType('createdAt', 'date string') })
+  createdAt: string;
 
   @ApiProperty({
     type: String,
     example: new Date().toISOString(),
   })
-  @IsDate()
-  updatedAt: Date;
+  @IsDateString({}, { message: ValidationMessages.mustBeValidType('updatedAt', 'date string') })
+  updatedAt: string;
 }
 
 @ApiSchema({
@@ -80,15 +83,16 @@ class UserProfileDto {
 })
 export class UserDto {
   @ApiProperty({ type: String })
-  @IsString()
+  @IsUUID('4', { message: ValidationMessages.mustBeValidType('id', 'UUID') })
+  @IsNotEmpty({ message: ValidationMessages.notEmpty('id') })
   id: string;
 
   @ApiProperty({
     type: String,
-    example: 'user1@gmail.com',
+    example: 'user01@gmail.com',
   })
-  @IsEmail({}, { message: 'The email is not correct format' })
-  @IsNotEmpty({})
+  @IsEmail({}, { message: ValidationMessages.mustBeValidType('email', 'email') })
+  @IsNotEmpty({ message: ValidationMessages.notEmpty('email') })
   email: string;
 
   @ApiHideProperty()
@@ -99,8 +103,8 @@ export class UserDto {
     type: String,
     example: 'user01',
   })
-  @IsString()
-  @IsNotEmpty()
+  @IsString({ message: ValidationMessages.mustString('username') })
+  @IsNotEmpty({ message: ValidationMessages.notEmpty('username') })
   username: string;
 
   @ApiProperty({
@@ -108,9 +112,8 @@ export class UserDto {
     enum: UserRole,
     example: UserRole.USER,
   })
-  @IsString()
   @IsEnum(UserRole, {
-    message: `Role must be one of the following values: ${Object.values(UserRole).join(', ')}`,
+    message: ValidationMessages.mustBeFollowValues('role', Object.values(UserRole)),
   })
   role: keyof typeof UserRole;
 
@@ -119,9 +122,8 @@ export class UserDto {
     enum: UserAccountStatus,
     example: UserAccountStatus.ACTIVE,
   })
-  @IsString()
   @IsEnum(UserAccountStatus, {
-    message: `Status must be one of the following values: ${Object.values(UserAccountStatus).join(', ')}`,
+    message: ValidationMessages.mustBeFollowValues('status', Object.values(UserAccountStatus)),
   })
   status: keyof typeof UserAccountStatus;
 
@@ -129,21 +131,23 @@ export class UserDto {
     type: String,
     example: null,
   })
-  emailVerifiedAt: Date | null;
+  @IsDateString({}, { message: ValidationMessages.mustBeValidType('emailVerifiedAt', 'date string') })
+  @IsOptional()
+  emailVerifiedAt: string | null;
 
   @ApiProperty({
     type: String,
     example: new Date(new Date().getTime() - 24 * 60 * 60 * 1000).toISOString(),
   })
-  @IsDate()
-  createdAt: Date;
+  @IsDateString({}, { message: ValidationMessages.mustBeValidType('createdAt', 'date string') })
+  createdAt: string;
 
   @ApiProperty({
     type: String,
     example: new Date().toISOString(),
   })
-  @IsDate()
-  updatedAt: Date;
+  @IsDateString({}, { message: ValidationMessages.mustBeValidType('updatedAt', 'date string') })
+  updatedAt: string;
 
   @ApiPropertyOptional({ type: () => UserProfileDto })
   @ValidateNested()
