@@ -1,0 +1,63 @@
+name: Feature request
+description: Request implementation of new functionality or capability
+title: '[Feature]: '
+labels: ['feature']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🚀 Feature Request
+
+        Request development of new feature functionality. Provide clear requirements and implementation context for development team evaluation.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Feature Summary
+      description: What functionality do you need?
+      placeholder: Add multi-criteria filtering for property listings
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: How should this work?
+      placeholder: Implement filtering system with multiple query parameters on GET /resources
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Business Priority
+      description: How important is this feature to you?
+      options:
+        - Critical (Blocking)
+        - High (Major improvement)
+        - Medium (Enhancement)
+        - Low (Nice to have)
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: Measurable requirements and criteria for feature completion
+      placeholder: |
+        - [ ] AC1 - API supports filtering by all attributes
+        - [ ] AC2 - Response time <200ms
+        - [ ] AC3 - Pagination works with filters
+        - [ ] AC4 - Documentation updated
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Related issues, mockups, examples
+    validations:
+      required: false
