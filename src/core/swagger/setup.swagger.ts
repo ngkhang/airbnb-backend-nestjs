@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { envKeys } from '../config/env-keys';
+import { APP_TOKEN_KEY } from '../jwt/jwt.const';
 
 import type { EnvKeys } from '../config/env-keys';
 
@@ -15,6 +16,15 @@ export const setupSwagger = (app: INestApplication): void => {
     .setTitle('Airbnb API')
     .setDescription(
       'REST API for an Airbnb-like platform that enables users to list, discover, and book unique accommodations around the world.',
+    )
+    .addApiKey(
+      {
+        type: 'apiKey',
+        in: 'header',
+        name: APP_TOKEN_KEY,
+        description: 'Application token is required for all endpoints',
+      },
+      APP_TOKEN_KEY,
     )
     .setVersion(`${version}`)
     .build();
