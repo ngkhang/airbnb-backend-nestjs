@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
 import { envKeys } from './core/config/env-keys';
+import { setupSwagger } from './core/swagger/setup.swagger';
 
 import type { EnvKeys } from './core/config/env-keys';
 
@@ -23,9 +24,15 @@ async function bootstrap() {
     })
     .setGlobalPrefix(appEnv.basePath);
 
+  // Integrate Swagger documentation
+  setupSwagger(app);
+
   await app.listen(appEnv.port);
 
-  Logger.log(`Application is running on: ${baseUrl}/${apiVersionPath}}`);
+  Logger.log(`
+    Application is running on: ${baseUrl}/${apiVersionPath}}
+    Api Documentation: ${baseUrl}/${apiVersionPath}/${appEnv.swaggerResource}
+    `);
 }
 
 void bootstrap();
