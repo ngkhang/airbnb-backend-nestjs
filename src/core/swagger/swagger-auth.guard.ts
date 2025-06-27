@@ -1,7 +1,11 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
-import { SWAGGER_PASSPORT_NAME } from '../jwt/jwt.const';
+import { ServerErrorCode } from 'src/shared/constant/errorCode';
+import { ClientErrorMessage, ServerErrorMessage } from 'src/shared/constant/message';
+
+import { ErrorDetailException } from '../filters/error-detail.exception';
+import { APP_TOKEN_KEY, SWAGGER_PASSPORT_NAME } from '../jwt/jwt.const';
 
 @Injectable()
 export class SwaggerAuthGuard extends AuthGuard(SWAGGER_PASSPORT_NAME) {
@@ -14,19 +18,30 @@ export class SwaggerAuthGuard extends AuthGuard(SWAGGER_PASSPORT_NAME) {
 
     if (user) return user;
 
-    const errors = this.mapJwtErrorToApiError(info);
+    const { message, error } = this.mapJwtErrorToApiError(info);
 
-    throw new UnauthorizedException({
-      message: errors.message,
-      code: errors.code,
-    });
+    throw new ErrorDetailException(
+      {
+        message,
+        errors: [
+          {
+            ...error,
+            field: APP_TOKEN_KEY,
+          },
+        ],
+      },
+      HttpStatus.UNAUTHORIZED,
+    );
   }
 
   private mapJwtErrorToApiError(info: unknown) {
     if (!info || (typeof info === 'object' && Object.keys(info).length === 0)) {
       return {
-        message: 'Not found token',
-        code: 'NOT_FOUND_TOKEN',
+        message: ClientErrorMessage.AUTH_TOKEN_MISSING,
+        error: {
+          message: ServerErrorMessage.AUTH_TOKEN_MISSING,
+          code: ServerErrorCode.AUTH_TOKEN_MISSING,
+        },
       };
     }
 
@@ -34,21 +49,30 @@ export class SwaggerAuthGuard extends AuthGuard(SWAGGER_PASSPORT_NAME) {
       switch (info.name) {
         case 'TokenExpiredError':
           return {
-            message: 'Token expired',
-            code: 'TOKEN_EXPIRED',
+            message: ClientErrorMessage.AUTH_TOKEN_EXPIRED,
+            error: {
+              message: ServerErrorMessage.AUTH_TOKEN_EXPIRED,
+              code: ServerErrorCode.AUTH_TOKEN_EXPIRED,
+            },
           };
         case 'JsonWebTokenError':
         case 'NotBeforeError':
           return {
-            message: 'Token incorrect',
-            code: 'TOKEN_INCORRECT',
+            message: ClientErrorMessage.AUTH_TOKEN_PAYLOAD_INVALID,
+            error: {
+              message: ServerErrorMessage.AUTH_TOKEN_PAYLOAD_INVALID,
+              code: ServerErrorCode.AUTH_TOKEN_PAYLOAD_INVALID,
+            },
           };
       }
     }
 
     return {
-      message: 'InValid token',
-      code: 'INVALID_TOKEN',
+      message: ClientErrorMessage.AUTH_TOKEN_FORMAT_INVALID,
+      error: {
+        message: ServerErrorMessage.AUTH_TOKEN_FORMAT_INVALID,
+        code: ServerErrorCode.AUTH_TOKEN_FORMAT_INVALID,
+      },
     };
   }
 }

@@ -1,8 +1,10 @@
+import type { TServerErrorCode } from '../constant/errorCode';
+
 export interface ApiErrorDetail {
-  code: string;
+  code: TServerErrorCode;
   message: string;
   field?: string;
-  value?: unknown;
+  value?: any;
 }
 
 export interface ApiResponse<TData> {

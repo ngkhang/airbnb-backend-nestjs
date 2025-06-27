@@ -1,9 +1,13 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
+import { ServerErrorCode } from 'src/shared/constant/errorCode';
+import { ClientErrorMessage, ServerErrorMessage } from 'src/shared/constant/message';
+
 import { envKeys, EnvKeys } from '../config/env-keys';
+import { ErrorDetailException } from '../filters/error-detail.exception';
 import { APP_TOKEN_KEY, SWAGGER_PASSPORT_NAME } from '../jwt/jwt.const';
 import { JwtPayloadData, SwaggerJwtPayloadData, SwaggerJwtValidated } from '../jwt/jwt.type';
 
@@ -21,7 +25,19 @@ export class SwaggerJwtStrategy extends PassportStrategy(Strategy, SWAGGER_PASSP
 
   validate(payload: JwtPayloadData & Partial<SwaggerJwtPayloadData>): SwaggerJwtValidated {
     if (!payload.sub) {
-      throw new UnauthorizedException('Missing or invalid subject in token');
+      throw new ErrorDetailException(
+        {
+          message: ClientErrorMessage.AUTH_TOKEN_FORMAT_INVALID,
+          errors: [
+            {
+              code: ServerErrorCode.AUTH_TOKEN_FORMAT_INVALID,
+              message: ServerErrorMessage.AUTH_TOKEN_FORMAT_INVALID,
+              field: APP_TOKEN_KEY,
+            },
+          ],
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
     }
 
     return new SwaggerJwtValidated({

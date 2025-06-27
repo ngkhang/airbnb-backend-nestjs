@@ -1,6 +1,7 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/common';
 import { Request, Response } from 'express';
 
+import { ClientErrorMessage } from 'src/shared/constant/message';
 import { ErrorDetailDto } from 'src/shared/dto/error-response.dto';
 import { ErrorResponseDto } from 'src/shared/dto/response.dto';
 
@@ -35,7 +36,7 @@ export class ErrorResponseFilter implements ExceptionFilter {
 
     const rawResponse = exception.getResponse();
 
-    let message = 'Internal server error';
+    let message = ClientErrorMessage.INTERNAL_SERVER_ERROR;
     let errors: ErrorDetailDto[] = [];
 
     // Case 2: Handle string response: HttpException(message, statusCode)
