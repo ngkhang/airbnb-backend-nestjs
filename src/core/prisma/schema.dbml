@@ -6,3 +6,56 @@ Project "Airbnb Clone" {
   database_type: 'MySQL'
   Note: ''
 }
+
+Table user_credentials {
+  id Bytes [pk]
+  email String [unique, not null]
+  username String [unique, not null]
+  password_hash String [not null]
+  status user_credentials_status [not null, default: 'pending']
+  role user_credentials_role [not null, default: 'user']
+  verified_at DateTime
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [default: `now()`, not null]
+  user_profiles user_profiles
+}
+
+Table user_profiles {
+  id Int [pk, increment]
+  first_name String
+  last_name String
+  phone_number String [unique]
+  avatar String
+  date_of_birth DateTime
+  bio String
+  gender user_profiles_gender [not null, default: 'not_provide']
+  timezone String
+  language String
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [default: `now()`, not null]
+  user_credentials_id Bytes [unique, not null]
+  user_credentials user_credentials [not null]
+}
+
+Enum user_profiles_gender {
+  male
+  female
+  other
+  not_provide
+}
+
+Enum user_credentials_role {
+  user
+  host
+  moderator
+  admin
+}
+
+Enum user_credentials_status {
+  pending
+  active
+  inactive
+  deleted
+}
+
+Ref: user_profiles.user_credentials_id - user_credentials.id [delete: Cascade]
