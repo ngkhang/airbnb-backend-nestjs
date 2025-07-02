@@ -15,7 +15,7 @@ import {
   MinLength,
 } from 'class-validator';
 
-import { Gender, Role, UserStatus } from '../domain/user.entity';
+import { Gender, Role, UserStatus } from '../constants/user.constant';
 
 @ApiSchema({
   name: 'UserCredentialDto',
