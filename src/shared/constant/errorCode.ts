@@ -12,7 +12,15 @@ enum BaseErrorEnum {
   VALIDATION_FAILED = 'VALIDATION_FAILED',
 }
 
-export enum ServerErrorEnum {}
+export enum ServerErrorEnum {
+  // Password service error
+  PASSWORD_HASHING_FAILED = 'PASSWORD_HASHING_FAILED',
+  PASSWORD_COMPARE_FAILED = 'PASSWORD_COMPARE_FAILED',
+
+  UUID_PROCESS_FAILED = 'UUID_PROCESS_FAILED',
+
+  RESOURCE_NOT_FOUND = 'RESOURCE_NOT_FOUND',
+}
 
 export const ServerErrorCode = { ...BaseErrorEnum, ...ServerErrorEnum };
 export type TServerErrorCode = keyof typeof ServerErrorCode;

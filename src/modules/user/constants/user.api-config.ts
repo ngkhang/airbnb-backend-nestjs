@@ -1,5 +1,9 @@
 export const USER_API_CONFIG = {
   tagDoc: 'Users',
   path: 'users',
-  endpoints: {},
+  endpoints: {
+    getAll: '',
+    getById: ':id',
+    getByEmail: 'email/:email',
+  },
 };

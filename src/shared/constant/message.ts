@@ -16,7 +16,15 @@ export const ServerErrorMessage: Record<TServerErrorCode, string> = {
   [ServerErrorCode.AUTH_TOKEN_FORMAT_INVALID]: 'JWT token structure is malformed, corrupted, or cannot be parsed',
 
   // Validation errors
-  [ServerErrorCode.VALIDATION_FAILED]: 'Please check your input and try again.',
+  [ServerErrorCode.VALIDATION_FAILED]: 'Field value does not match expected format or pattern',
+
+  // Password errors
+  [ServerErrorCode.PASSWORD_HASHING_FAILED]: 'The process of hashing the password failed',
+  [ServerErrorCode.PASSWORD_COMPARE_FAILED]: 'The process of comparing the password failed',
+
+  [ServerErrorCode.UUID_PROCESS_FAILED]: 'The process of uuid failed',
+
+  [ServerErrorCode.RESOURCE_NOT_FOUND]: 'Resource not found',
 };
 
 /**

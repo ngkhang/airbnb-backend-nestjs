@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional, ApiSchema } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional, ApiSchema, OmitType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsEmail,
@@ -181,10 +181,16 @@ class UserProfileDto {
 
 @ApiSchema({
   name: 'UserDto',
-  description: 'DTO for representation a user.',
+  description: 'DTO for',
 })
 export class UserDto extends UserCredentialDto {
   @ApiPropertyOptional({ type: () => UserProfileDto })
   @Type(() => UserProfileDto)
   profile: UserProfileDto | null;
 }
+
+@ApiSchema({
+  name: 'UserResponseDto',
+  description: 'DTO for representation a user without password',
+})
+export class UserResponseDto extends OmitType(UserDto, ['password']) {}

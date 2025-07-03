@@ -9,6 +9,7 @@ import { ErrorResponseFilter } from './core/filters/error-response.filter';
 import { SuccessResponseInterceptor } from './core/interceptors/success-response.interceptor';
 import jwtConfig from './core/jwt/jwt.config';
 import { SwaggerAuthModule } from './core/swagger/swagger.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { SwaggerAuthModule } from './core/swagger/swagger.module';
       cache: true,
     }),
     SwaggerAuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [
