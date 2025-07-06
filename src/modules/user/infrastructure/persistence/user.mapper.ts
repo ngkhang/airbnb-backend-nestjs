@@ -1,8 +1,12 @@
-import { binaryToUuid } from 'src/shared/utils/uuid';
+import { binaryToUuid, uuidToBinary } from 'src/shared/utils/uuid';
 
 import type { User, UserCredential, UserProfile } from '../../domain/user.entity';
 import type { UserDto } from '../../dto/user.dto';
-import type { user_credentials as UserCredentialModel, user_profiles as UserProfileModel } from '@prisma/client';
+import type {
+  Prisma,
+  user_credentials as UserCredentialModel,
+  user_profiles as UserProfileModel,
+} from '@prisma/client';
 
 type UserModel = UserCredentialModel & { user_profiles: UserProfileModel | null };
 
@@ -23,6 +27,44 @@ export class UserMapper {
     const { passwordHash, ...domain } = userDomain;
     return {
       ...domain,
+    };
+  }
+
+  static domainToCreateModel(
+    userDomainCreate: Pick<UserCredential, 'id' | 'email' | 'passwordHash' | 'username'>,
+  ): Prisma.user_credentialsCreateInput {
+    return {
+      id: uuidToBinary(userDomainCreate.id),
+      email: userDomainCreate.email,
+      password_hash: userDomainCreate.passwordHash,
+      username: userDomainCreate.username,
+    };
+  }
+
+  static credentialDomainToUpdateModel(
+    credentialDomain: Partial<Omit<UserCredential, 'id' | 'email' | 'createdAt' | 'updatedAt'>>,
+  ): Prisma.user_credentialsUpdateInput {
+    return {
+      password_hash: credentialDomain.passwordHash,
+      username: credentialDomain.username,
+      status: credentialDomain.status,
+      role: credentialDomain.role,
+      verified_at: credentialDomain.verifiedAt,
+    };
+  }
+
+  static profileDomainToUpdateModel(
+    profileDomain: Partial<Omit<UserProfile, 'createdAt' | 'updatedAt'>>,
+  ): Prisma.user_profilesUpdateInput {
+    return {
+      first_name: profileDomain.firstName,
+      last_name: profileDomain.lastName,
+      avatar: profileDomain.avatar,
+      phone_number: profileDomain.phoneNumber,
+      bio: profileDomain.bio,
+      language: profileDomain.language,
+      gender: profileDomain.gender,
+      date_of_birth: profileDomain.dateOfBirth && new Date(profileDomain.dateOfBirth),
     };
   }
 

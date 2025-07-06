@@ -97,7 +97,7 @@ export class UserCredentialDto {
   name: 'UserProfileDto',
   description: 'DTO for representation a profile of user.',
 })
-class UserProfileDto {
+export class UserProfileDto {
   @ApiPropertyOptional({
     type: String,
     example: 'Khang',
@@ -159,7 +159,7 @@ class UserProfileDto {
     example: '2025-06-30',
     description: 'Accepts both date (YYYY-MM-DD) and datetime (ISO 8601) formats',
   })
-  @IsISO8601({ strict: true })
+  @IsISO8601({ strict: false })
   dateOfBirth: Date | null;
 
   @ApiProperty({

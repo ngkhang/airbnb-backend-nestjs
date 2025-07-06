@@ -20,6 +20,7 @@ export enum ServerErrorEnum {
   UUID_PROCESS_FAILED = 'UUID_PROCESS_FAILED',
 
   RESOURCE_NOT_FOUND = 'RESOURCE_NOT_FOUND',
+  RESOURCE_ALREADY_EXISTS = 'RESOURCE_ALREADY_EXISTS',
 }
 
 export const ServerErrorCode = { ...BaseErrorEnum, ...ServerErrorEnum };

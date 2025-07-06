@@ -5,5 +5,8 @@ export const USER_API_CONFIG = {
     getAll: '',
     getById: ':id',
     getByEmail: 'email/:email',
+    create: '',
+    update: ':id',
+    delete: ':id',
   },
 };

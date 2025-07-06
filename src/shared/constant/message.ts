@@ -25,6 +25,7 @@ export const ServerErrorMessage: Record<TServerErrorCode, string> = {
   [ServerErrorCode.UUID_PROCESS_FAILED]: 'The process of uuid failed',
 
   [ServerErrorCode.RESOURCE_NOT_FOUND]: 'Resource not found',
+  [ServerErrorCode.RESOURCE_ALREADY_EXISTS]: 'Resource already exists',
 };
 
 /**
