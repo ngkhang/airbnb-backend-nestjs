@@ -1,5 +1,4 @@
 import { HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { stringify } from 'uuid';
 
 import { ServerErrorCode } from 'src/shared/constant/errorCode';
 import { ServerErrorMessage } from 'src/shared/constant/message';
@@ -7,6 +6,7 @@ import { ServiceReturn } from 'src/shared/types/service-return.type';
 import { hashPassword } from 'src/shared/utils/password';
 import { generateBinaryUuid } from 'src/shared/utils/uuid';
 
+import { Role } from './constants/user.constant';
 import { USER_MESSAGES } from './constants/user.message';
 import { User, UserProfile } from './domain/user.entity';
 import { UserRepositoryPort, UserServicePort } from './domain/user.port';
@@ -18,6 +18,21 @@ export class UserService implements UserServicePort {
 
   async getAllUsers(): ServiceReturn<User[]> {
     const users = await this.userRepo.findAll();
+
+    if (users.length === 0) {
+      return {
+        success: false,
+        message: USER_MESSAGES.ERROR.RESOURCE_NOT_FOUND,
+        statusCode: HttpStatus.NOT_FOUND,
+        errors: [
+          {
+            code: ServerErrorCode.RESOURCE_NOT_FOUND,
+            message: ServerErrorMessage.RESOURCE_NOT_FOUND,
+          },
+        ],
+      };
+    }
+
     return {
       success: true,
       data: users,
@@ -32,7 +47,7 @@ export class UserService implements UserServicePort {
       return {
         success: false,
         message: USER_MESSAGES.ERROR.RESOURCE_NOT_FOUND,
-        statusCode: 404,
+        statusCode: HttpStatus.NOT_FOUND,
         errors: [
           {
             code: ServerErrorCode.RESOURCE_NOT_FOUND,
@@ -58,7 +73,7 @@ export class UserService implements UserServicePort {
       return {
         success: false,
         message: USER_MESSAGES.ERROR.RESOURCE_NOT_FOUND,
-        statusCode: 404,
+        statusCode: HttpStatus.NOT_FOUND,
         errors: [
           {
             code: ServerErrorCode.RESOURCE_NOT_FOUND,
@@ -77,7 +92,9 @@ export class UserService implements UserServicePort {
     };
   }
 
-  async createUserByEmail(newUser: Pick<User, 'email' | 'passwordHash'>): ServiceReturn<{ userId: string }> {
+  async createUserByEmail(
+    newUser: Pick<User, 'email' | 'password'> & { role?: User['role'] },
+  ): ServiceReturn<{ userId: string }> {
     const userExist = await this.userRepo.findByEmail(newUser.email);
 
     if (userExist) {
@@ -96,17 +113,18 @@ export class UserService implements UserServicePort {
       };
     }
 
-    const result = await this.userRepo.create({
-      id: stringify(generateBinaryUuid()),
+    const newUserId = await this.userRepo.create({
+      id: generateBinaryUuid(),
       email: newUser.email,
-      passwordHash: hashPassword(newUser.passwordHash),
+      password: hashPassword(newUser.password),
       username: newUser.email.split('@')[0],
+      role: newUser.role || Role.USER,
     });
 
     return {
       success: true,
       data: {
-        userId: result,
+        userId: newUserId,
       },
       message: USER_MESSAGES.SUCCESS.CREATE,
     };

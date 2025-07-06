@@ -240,10 +240,7 @@ export class UserController implements UserControllerPort {
   @Post(endpoints.create)
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createUserDto: CreateUserDto): Promise<ControllerReturnDto<{ userId: string }>> {
-    const result = await this.userService.createUserByEmail({
-      email: createUserDto.email,
-      passwordHash: createUserDto.password,
-    });
+    const result = await this.userService.createUserByEmail(createUserDto);
 
     if (!result.success) {
       throw new ErrorDetailException(

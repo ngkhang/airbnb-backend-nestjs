@@ -53,7 +53,7 @@ export class UserRepository implements UserRepositoryPort {
     return UserMapper.modelToDomain({ ...credential, user_profiles });
   }
 
-  async create(user: Pick<User, 'id' | 'email' | 'username' | 'passwordHash'>): Promise<string> {
+  async create(user: Pick<User, 'id' | 'email' | 'username' | 'password' | 'role'>): Promise<string> {
     const newCredentialUser = UserMapper.domainToCreateModel(user);
 
     const record = await this.prisma.user_credentials.create({

@@ -18,7 +18,9 @@ export abstract class UserServicePort {
   abstract getAllUsers(): ServiceReturn<User[]>;
   abstract getUserById(id: string): ServiceReturn<User>;
   abstract getUserByEmail(email: string): ServiceReturn<User>;
-  abstract createUserByEmail(newUser: Pick<User, 'email' | 'passwordHash'>): ServiceReturn<{ userId: string }>;
+  abstract createUserByEmail(
+    newUser: Pick<User, 'email' | 'password'> & { role?: User['role'] },
+  ): ServiceReturn<{ userId: string }>;
   abstract updateProfileUser(
     userId: string,
     profile: Partial<Omit<UserProfile, 'createdAt' | 'updatedAt'>>,
@@ -31,7 +33,7 @@ export abstract class UserRepositoryPort {
   abstract findById(id: string): Promise<User | null>;
   abstract findByEmail(email: string): Promise<User | null>;
   abstract findByPhone(phoneNumber: string): Promise<User | null>;
-  abstract create(user: Pick<User, 'id' | 'email' | 'username' | 'passwordHash'>): Promise<string>;
+  abstract create(user: Pick<User, 'id' | 'email' | 'username' | 'password' | 'role'>): Promise<string>;
   abstract update(
     id: string,
     credential: Partial<Omit<UserCredential, 'id' | 'email' | 'createdAt' | 'updatedAt'>> | null,

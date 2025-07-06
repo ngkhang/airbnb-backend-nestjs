@@ -17,7 +17,7 @@ export interface UserCredential {
   id: string;
   email: string;
   username: string;
-  passwordHash: string;
+  password: string;
   status: UserStatus;
   role: Role;
   verifiedAt: Date | null;

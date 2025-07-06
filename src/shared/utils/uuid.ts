@@ -8,12 +8,12 @@ import { ServerErrorCode } from '../constant/errorCode';
 import { ClientErrorMessage, ServerErrorMessage } from '../constant/message';
 
 /**
- * Generate a binary UUID (Buffer)
+ * Generate a binary UUID (Buffer) and convert to a string
  */
-export const generateBinaryUuid = (): Uint8Array => {
+export const generateBinaryUuid = (): string => {
   try {
     const buffer = Buffer.alloc(16);
-    return uuidV4({}, buffer);
+    return stringify(uuidV4({}, buffer));
   } catch (error) {
     throw new ErrorDetailException(
       {

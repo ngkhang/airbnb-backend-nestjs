@@ -133,7 +133,7 @@ export class UserProfileDto {
 
   @ApiPropertyOptional({
     type: String,
-    example: '2000-02-26T00:00:00.000Z',
+    example: 'I love coffee',
   })
   @IsString()
   @IsOptional()
